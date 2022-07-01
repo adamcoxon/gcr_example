@@ -1,23 +1,23 @@
 resources:
 # The repo with our Dockerfile
-- name: concourse-examples
+- name: code
   type: git
   icon: github
   source:
-    uri: https://github.com/concourse/examples.git
-    branch: master
-- icon: docker
-  name: gcr-example
-  source:
-    password: "Not a JSON Object"
-    repository: europe-west1-docker.pkg.dev/uk-dt-skycom-prod/docker-images/akamai-sandboxes
-    username: _json_key
-  type: registry-image
+    uri: https://github.com/adamcoxon/gcr_example.git
+    branch: main
+# - icon: docker
+#   name: gcr-example
+#   source:
+#     password: "Not a JSON Object"
+#     repository: europe-west1-docker.pkg.dev/uk-dt-skycom-prod/docker-images/akamai-sandboxes
+#     username: _json_key
+#   type: registry-image
 
 jobs:
 - name: build-and-push
   plan:
-  - get: concourse-examples
+  - get: code
   - task: build-task-image
     privileged: true
     config:
@@ -33,4 +33,4 @@ jobs:
       run:
         path: build
       params:
-        CONTEXT: concourse-examples/Dockerfiles/simple
+        CONTEXT: code

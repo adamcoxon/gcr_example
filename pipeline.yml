@@ -1,0 +1,36 @@
+resources:
+# The repo with our Dockerfile
+- name: concourse-examples
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/concourse/examples.git
+    branch: master
+- icon: docker
+  name: gcr-example
+  source:
+    password: "Not a JSON Object"
+    repository: europe-west1-docker.pkg.dev/uk-dt-skycom-prod/docker-images/akamai-sandboxes
+    username: _json_key
+  type: registry-image
+
+jobs:
+- name: build-and-push
+  plan:
+  - get: concourse-examples
+  - task: build-task-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs:
+      - name: concourse-examples
+      outputs:
+      - name: image
+      run:
+        path: build
+      params:
+        CONTEXT: concourse-examples/Dockerfiles/simple
